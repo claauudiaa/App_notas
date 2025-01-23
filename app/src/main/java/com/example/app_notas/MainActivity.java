@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private FloatingActionButton botonAgregar;
+    private ArrayList<Nota> notas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         botonAgregar = findViewById(R.id.botonFlotante);
 
-        ArrayList<Nota> notas = new ArrayList<Nota>();
+        notas = new ArrayList<Nota>();
         notas.add(new Nota("Primera nota", "Probando el adapter"));
         notas.add(new Nota("COMPRA", "Huevos, tomate, chorizo"));
         notas.add(new Nota("Contraseñas", "GitHub: 1234"));
@@ -60,10 +61,35 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+                    botonAgregar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intento = new Intent(MainActivity.this, AddEditNoteActivity.class);
+                            startActivityForResult(intento, 1);
+                        }
+                    });
+
                 }
             }
         });
     }
+    
+    // Metodo completo de chatgpt
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == 1 && resultCode == RESULT_OK) {
+
+                String titulo = data.getStringExtra("titulo");
+                String contenido = data.getStringExtra("contenido");
+
+                Nota nuevaNota = new Nota(titulo, contenido);
+                notas.add(nuevaNota);
+
+                ((Adaptador) listView.getAdapter()).notifyDataSetChanged();
+            }
+        }
 
     public class Nota {
         private String titulo;
